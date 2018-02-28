@@ -3,5 +3,5 @@ Repositorio del curso de Reconocimiento de Patrones y Aprendizaje de Automatizad
 Devs:
 
  - Abud Alcalá, Gibran Abner
- - Beltran, Daniel
+ - Beltran Hernandez, Daniel
  - Soto Astorga, Enrique Francisco
