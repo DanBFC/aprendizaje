@@ -1,32 +1,61 @@
-# import scrapy
-# from scrapy.linkextractors import LinkExtractor
-# from scrapy.contrib.spiders import CrawlSpider, Rule
-# from scrapy.contrib.linkextractors import lxmlLinkExtractor
+import scrapy
+import unicodedata
+from scrapy.selector import Selector
+from scrapy.http import HtmlResponse
 
-
-# class QuotesSpider(scrapy.Spider):
-#     name = "recipes"
-#     allowed_domains = ["cookingchanneltv.com"]
-#     urls = ['https://www.cookingchanneltv.com/recipes/articles/100-traditional-italian-recipes']    
-
-#     rules = (Rule(LxmlLinkExtractor(allow()), callback = 'parse', follos = True),)
+class QuotesSpider(scrapy.Spider):
+    name = "recipes"
     
-    # def start_requests(self):
-    #     urls = ['https://www.cookingchanneltv.com/recipes/articles/100-traditional-italian-recipes']
-    #     for url in urls:
-    #         yield scrapy.Request(url=url, callback=self.parse)
+    def start_requests(self):
+        urls = ['https://www.cookingchanneltv.com/recipes/articles/100-traditional-italian-recipes']
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse)
+
+    def parse(self, response):
+        # Note that its done with css, and not lxml
+        links = response.css('a[href*=recipes]::attr(href)').extract()
+
+
+        # transform the whole list of unicode strings to string of utf-8
+         for link in links:
+             link.encode('utf-8')
+
+        # We want to remove this crap
+        prefix = "//www.cookingchanneltv.com/recipes/"
+        prefix2 = "//www.cookingchanneltv.com/recipes/packages/"
+        prefix3 = "//www.cookingchanneltv.com/recipes/photos/"
+        prefix4 = "//www.cookingchanneltv.com/recipes/a-z"
+
+        recipes = []
+        
+        # Now to discriminate the crappy links from the ones we actually want.
+        for link in links:
+            if(link.startswith(prefix)):
+                recipes.insert(0, link)
+
+        recipes2 = []
+        for link in recipes:
+            print "Linku: "
+            print link
+            if not link.startswith("//www.cookingchanneltv.com/recipes/packages/") :
+                print "Inserted"
+                recipes2.insert(0, link)
+
+                #or not link.startswith(prefix3) or not link.startswith(prefix4):
+        # To actually see if it finds the recipes
+        # This is just flow control
+        # print "AQUI DEBE DE ESTAR LA MIERDA"
+        # print recipes
+        # print "AQUI TERMINA LA MIERDA"
+
+        # Then we write them to a file
+        filename = 'ligas-recetas.txt' 
+        with open(filename, 'w') as f:
+            for link in recipes2:
+                f.write("%s\n" % link)
+
+        
+                            
+
 
     
-
-            
-            
-    # def parse(self, response):
-    #     #page = response.url.split("/")[-2]
-    #     for link in LxmlLinkExtractor(allow = (), deny = self.allowed_domains).extract_links(response):
-    #         item = someItem()
-    #         item['url'] = link.url
-    #     filename = 'recipes-%s.html' % page
-    #     with open(filename, 'wb') as f:
-    #         f.write(response.body)
-    #     self.log('Saved file %s' % filename)
-

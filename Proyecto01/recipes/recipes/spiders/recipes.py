@@ -15,29 +15,39 @@ class QuotesSpider(scrapy.Spider):
         # Note that its done with css, and not lxml
         links = response.css('a[href*=recipes]::attr(href)').extract()
 
-        # To actually see if it finds the recipes
-        # This is just flow control
-        print "AQUI DEBE DE ESTAR LA MIERDA"
-        print links
-        print "AQUI TERMINA LA MIERDA"
-
-        # transform the whole list of unicode strings to string of utf-8
-        for link in links:
-            link.encode('utf-8')
-
         # We want to remove this crap
         prefix = "//www.cookingchanneltv.com/recipes/"
+        prefix2 = "//www.cookingchanneltv.com/recipes/packages/"
+        prefix3 = "//www.cookingchanneltv.com/recipes/photos/"
+        prefix4 = "//www.cookingchanneltv.com/recipes/a-z"
+
         recipes = []
         
-        # Now to discriminate the crappy links from the ones we actually want.
+        # Now to discriminate the crappy links from the ones we actually want
+        # This is an atrocius piece of code, but it works.
         for link in links:
             if(link.startswith(prefix)):
                 recipes.insert(0, link)
 
+        recipes2 = []
+        for link in recipes:
+            if not link.startswith(prefix2):
+                recipes2.insert(0, link)
+
+        recipes3 = []
+        for link in recipes2:
+            if not link.startswith(prefix3):
+                recipes3.insert(0, link)
+                
+        recipes4 = []
+        for link in recipes3:
+            if not link.startswith(prefix4):
+                recipes4.insert(0, link)
+
         # Then we write them to a file
         filename = 'ligas-recetas.txt' 
         with open(filename, 'w') as f:
-            for link in recipes:
+            for link in recipes4:
                 f.write("%s\n" % link)
 
         
