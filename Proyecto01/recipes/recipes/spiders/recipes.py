@@ -1,14 +1,11 @@
 import scrapy
+import unicodedata
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 
-
 class QuotesSpider(scrapy.Spider):
     name = "recipes"
-    body = ''
-
-
-
+    
     def start_requests(self):
         urls = ['https://www.cookingchanneltv.com/recipes/articles/100-traditional-italian-recipes']
         for url in urls:
@@ -17,14 +14,34 @@ class QuotesSpider(scrapy.Spider):
     def parse(self, response):
         # Note that its done with css, and not lxml
         links = response.css('a[href*=recipes]::attr(href)').extract()
-        # this is just flow controll
+
+        # To actually see if it finds the recipes
+        # This is just flow control
         print "AQUI DEBE DE ESTAR LA MIERDA"
-        # to actually see if it finds the recipes
         print links
         print "AQUI TERMINA LA MIERDA"
-        # This is all to write the recipes to a file, once they have been found
-        filename = 'ligas-recetas.txt'
+
+        # transform the whole list of unicode strings to string of utf-8
+        for link in links:
+            link.encode('utf-8')
+
+        # We want to remove this crap
+        prefix = "//www.cookingchanneltv.com/recipes/"
+        recipes = []
+        
+        # Now to discriminate the crappy links from the ones we actually want.
+        for link in links:
+            if(link.startswith(prefix)):
+                recipes.insert(0, link)
+
+        # Then we write them to a file
+        filename = 'ligas-recetas.txt' 
         with open(filename, 'w') as f:
-            for link in links:
+            for link in recipes:
                 f.write("%s\n" % link)
 
+        
+                            
+
+
+    
