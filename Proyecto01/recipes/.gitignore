@@ -1,0 +1,8 @@
+recipes/__pycache__/
+recipes/spiders/__pycache__/
+
+recipes/__init__.pyc
+recipes/settings.pyc
+recipes/spiders/__init__.pyc
+recipes/spiders/recipes.pyc
+
