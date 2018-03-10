@@ -11,20 +11,6 @@ class QuotesSpider(scrapy.Spider):
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
-
-    def link(self, links, prefix):
-        recipes = []
-        for link in links:
-            if not link.startswith(prefix):
-                recipes.insert(0, link)
-        return recipes
-
-    def request_for_links(self, links):
-        print "============================================================"
-        print "Entra metodo"
-        for link in links:
-            yield scrapy.Request(url=link, callback=self.parse_link)
-
     def is_valid(self, link):
         # We want to remove this crap
         prefix0 = "//www.cookingchanneltv.com/recipes/" in link
@@ -49,21 +35,8 @@ class QuotesSpider(scrapy.Spider):
                 else:
                     recipes.insert(0, link.replace("//", "https://"))
 
-        print "============================================================"
-        print "Antes del metodo"
-        self.request_for_links([1,2,3,4])
-        print "depues del metodo"
-
         # Then we write them to a file
         filename = 'ligas-recetas.txt'
         with open(filename, 'w') as f:
             for link in recipes:
                 f.write("%s\n" % link)
-
-    def parse_link(self, response):
-        print "============================================================"
-        print "============================================================"
-        print "metodo"
-        print response.status
-        print "============================================================"
-        print "============================================================"
