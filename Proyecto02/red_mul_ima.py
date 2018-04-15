@@ -3,8 +3,8 @@ import tensorflow as tf
 
 # importamos librerías adicionales
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+#import matplotlib.pyplot as plt
+#import matplotlib.cm as cm
 import pandas as pd
 
 # importando el dataset
@@ -17,6 +17,9 @@ mnist.train.images.shape
 # cada imagen es un array de 28x28 con cada pixel 
 # definido como escala de grises.
 digito1 = mnist.train.images[0].reshape((28, 28))
+cadenita = type(digito1)
+print ("AQUI ESTÁ LA MIERDA")
+print (cadenita)
 
 # visualizando el primer digito
 #plt.imshow(digito1, cmap = cm.Greys)

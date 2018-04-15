@@ -2,21 +2,21 @@
 import tensorflow as tf
 
 # importar el programa que regresa los arreglos de las imagenes
-from image_loader import curie_image_reader
+from image_loader import image_reader
 
 # importamos librerías adicionales
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+#import matplotlib.pyplot as plt
+#import matplotlib.cm as cm
 import pandas as pd
 
 # Obteniendo dataset
 # Data paths
-path_to_cat_images = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
-path_to_non-cat_images = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
+path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
+path_to_nonCurie = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
 
-curieImages = curie_image_reader(path_to_cat_images, 1)
-nonCurieImages = curie_image_reader(path_to_non-cat_images, 0)
+curieImages = image_reader(path_to_curie, 1)
+nonCurieImages = image_reader(path_to_nonCurie, 0)
 dataSet = curieImages + nonCurieImages
 
 # cada imagen es un array de 800x800 con cada pixel
