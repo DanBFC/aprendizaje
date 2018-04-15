@@ -2,7 +2,7 @@ import os, sys
 import tensorflow as tf
 
 
-
+# This creates an array with the images.
 def image_reader(path_to_curie, label):
     curieArray = []
     curieImages = os.listdir(path_to_curie)
@@ -13,21 +13,29 @@ def image_reader(path_to_curie, label):
         curieArray.append([curie, label])
     return curieArray
 
+
+# This just create a file to indicate the labels and path + name of the images.
 def image_file_creator():
     curiePath = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
     nonCuriePath = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
 
     curieImages = os.listdir(curiePath)
-    nonCurieImages = os.listdir(nonCurieImages)
+    nonCurieImages = os.listdir(nonCuriePath)
 
-    with open('dataSet.txt', 'r+') as f:
+    with open('images.txt', 'w') as f:
         for img in curieImages:
-            f.write(img + " " + str(1))
+            f.write(curiePath + img + " " + str(1) + "\n")
         for img in nonCurieImages:
-            f.write(img + " " + str(0))
+            f.write(nonCuriePath + img + " " + str(0) + "\n")
 
-
+# This reads the images and transforms them into TFRecord
 def read_images(dataset_path, mode, batch_size):
+    
+    CHANNELS = 3
+    IMG_HEIGHT = 800
+    IMG_WIDTH = 800
+    N_CLASSES = 2
+    
     imagepaths, labels = list(), list()
     if mode == 'file':
         data = open(dataset_path, 'r').read().splitlines()
@@ -62,7 +70,7 @@ def read_images(dataset_path, mode, batch_size):
 
     # Read images from disk
     image =  tf.read_file(image)
-    image = tf.image.decode_jpeg(image, channel = CHANNELS)
+    image = tf.image.decode_jpeg(image, channels = CHANNELS)
 
     # Resize images to a common size
     image = tf.image.resize_images(image, [IMG_HEIGHT, IMG_WIDTH])
@@ -78,11 +86,22 @@ def read_images(dataset_path, mode, batch_size):
 
     return X, Y
 
-# if __name__ == "__main__":
-#     path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
-#     path_to_nonCurie = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
+if __name__ == "__main__":
+    # path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
+    # path_to_nonCurie = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
 
-#     curie_DataSet = image_reader(path_to_curie, 1)
-#     nonCurie_DataSet = image_reader(path_to_nonCurie, 0)
-#     print nonCurie_DataSet + curie_DataSet
-#     print curie_DataSet
+    path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+    MODE = 'file'
+    batch_size = 4
+    x, y = read_images(path, MODE, batch_size)
+    print "here is x"
+    print x
+
+    print "here is y"
+    print y
+    # image_file_creator()
+    # curie_DataSet = image_reader(path_to_curie, 1)
+    # nonCurie_DataSet = image_reader(path_to_nonCurie, 0)
+    # print nonCurie_DataSet + curie_DataSet
+    # print curie_DataSet
+
