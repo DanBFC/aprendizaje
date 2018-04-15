@@ -2,7 +2,7 @@
 import tensorflow as tf
 
 # importar el programa que regresa los arreglos de las imagenes
-from image_loader import image_reader
+from image_loader import images_to_tensor
 
 # importamos librerías adicionales
 import numpy as np
@@ -12,16 +12,14 @@ import pandas as pd
 
 # Obteniendo dataset
 # Data paths
-path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
-path_to_nonCurie = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
-
-curieImages = image_reader(path_to_curie, 1)
-nonCurieImages = image_reader(path_to_nonCurie, 0)
-dataSet = curieImages + nonCurieImages
-
+path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+mode = 'file'
+batch_size = 4
+dataSet, labels = images_to_tensor(path, mode, batch_size)
+    
 # cada imagen es un array de 800x800 con cada pixel
 # definido como escala de grises.
-digito1 = dataSet[0].reshape((800, 800))
+#digito1 = dataSet[0].reshape((800, 800))
 
 # visualizando el primer digito
 #plt.imshow(digito1, cmap = cm.Greys)
@@ -36,7 +34,7 @@ logs_path = "/tmp/tensorflow_logs/perceptron"
 
 # Parametros de la red
 n_oculta_1 = 256 # 1ra capa de atributos
-n_oculta_2 = 256 # 2ra capa de atributos
+n_ocultan_2 = 256 # 2ra capa de atributos
 n_entradas = 640000 # datos de MNIST(forma img: 28*28)
 n_clases = 2 # Total de clases a clasificar (1 o 0)
 

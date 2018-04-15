@@ -29,7 +29,7 @@ def image_file_creator():
             f.write(nonCuriePath + img + " " + str(0) + "\n")
 
 # This reads the images and transforms them into TFRecord
-def read_images(dataset_path, mode, batch_size):
+def images_to_tensor(dataset_path, mode, batch_size):
     
     CHANNELS = 3
     IMG_HEIGHT = 800
@@ -86,19 +86,19 @@ def read_images(dataset_path, mode, batch_size):
 
     return X, Y
 
-if __name__ == "__main__":
-    # path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
-    # path_to_nonCurie = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
+# if __name__ == "__main__":
+#     path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
+#     path_to_nonCurie = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
 
-    path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
-    MODE = 'file'
-    batch_size = 4
-    x, y = read_images(path, MODE, batch_size)
-    print "here is x"
-    print x
+#     path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+#     MODE = 'file'
+#     batch_size = 4
+#     x, y = images_to_tensor(path, MODE, batch_size)
+#     print "here is x"
+#     print x
 
-    print "here is y"
-    print y
+#     print "here is y"
+#     print y
     # image_file_creator()
     # curie_DataSet = image_reader(path_to_curie, 1)
     # nonCurie_DataSet = image_reader(path_to_nonCurie, 0)
