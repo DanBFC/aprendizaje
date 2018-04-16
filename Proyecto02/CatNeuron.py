@@ -10,7 +10,8 @@ import numpy as np
 #import matplotlib.cm as cm
 import pandas as pd
 
-logs_path = "/tmp/tensorflow_logs/perceptron"
+#logs_path = "/tmp/tensorflow_logs/perceptron"
+logs_path = r"D:\Documents\aprendizaje\Proyecto02\perceptron"
 # Parametros
 learning_rate = 0.001
 epocas = 5
@@ -18,6 +19,7 @@ display_step = 100
 num_steps = 500
 dropout = 0.75
 n_clases = 2 # Total de clases a clasificar (1 o 0)
+n_entradas = 22500
 lote = 20
 # Parametros de la red
 #n_oculta_1 = 256 # 1ra capa de atributos
@@ -26,8 +28,8 @@ lote = 20
 
 
 # Decimos el modo en el que está descrito el dataset y su directorio y archivo
-path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
-# path = r"C:\Users\Tredok Vayntrub\Documents\GitHub\aprendizaje\Proyecto02\images.txt"
+# path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+path = r"D:\Documents\aprendizaje\Proyecto02\images.txt"
 mode = 'file'
 
 # Obtenemos el dataset
@@ -71,31 +73,42 @@ def conv_net(x, n_classes, dropout, reuse, is_training):
 
 
 # Create a graph for training
-logits_train = conv_net(X, n_clases, dropout, reuse=False, is_training=True)
-# Create another graph for testing that reuse the same weights
-logits_test = conv_net(X, n_clases, dropout, reuse=True, is_training=False)
+with tf.name_scope('Modelo'):
+    pred = conv_net(X, n_clases, dropout, reuse=False, is_training=True)
+    # Create another graph for testing that reuse the same weights
+    logits_test = conv_net(X, n_clases, dropout, reuse=True, is_training=False)
 
 # Define loss and optimizer (with train logits, for dropout to take effect)
-loss_op = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits_train,
-                                                                        labels=Y))
-optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
-train_op = optimizer.minimize(loss_op)
+with tf.name_scope('costo'):
+    costo = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=pred, labels=Y))
+
+# Algoritmo de optimimzacion
+with tf.name_scope('optimizador'):
+    optimizador = tf.train.AdamOptimizer(learning_rate=learning_rate)
+    train_op = optimizador.minimize(costo)
 
 # Evaluate model (with test logits, for dropout to be disabled)
-correct_pred = tf.equal(tf.argmax(logits_test, 1), tf.cast(Y, tf.int64))
-accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+with tf.name_scope('Presicion'):
+    # pred_correcta = tf.equal(tf.argmax(logits_test, 1), tf.cast(Y, tf.int64))
+    # Evaluar el modelo
+    pred_correcta = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
+    # Calcular la presicion
+    accuracy = tf.reduce_mean(tf.cast(pred_correcta, "float"))
 
-# Initialize the variables (i.e. assign their default value)
+# Se inicializan las variables
 init = tf.global_variables_initializer()
-
+# Crear la sumarizacin para controlar el Costo
+tf.summary.scalar("Costo", costo)
+# Juntar los resumenes en una sola operacion
+merged_summary_op = tf.summary.merge_all()
 # Saver object
 saver = tf.train.Saver()
 
 # Start training
 with tf.Session() as sess:
-
     # Run the initializer
     sess.run(init)
+
     print("Starting session")
 
     # Start the data queue
@@ -106,108 +119,39 @@ with tf.Session() as sess:
 
         if step % display_step == 0:
             # Run optimization and calculate batch loss and accuracy
-            _, loss, acc = sess.run([train_op, loss_op, accuracy])
+            _, loss, acc = sess.run([pred, costo, accuracy])
             print("Step " + str(step) + ", Minibatch Loss= " + \
                   "{:.4f}".format(loss) + ", Training Accuracy= " + \
                   "{:.3f}".format(acc))
         else:
             # Only run the optimization op (backprop)
             sess.run(train_op)
-
     print("Optimization Finished!")
 
     # Save your model
     saver.save(sess, 'my_tf_model')
 
-    # # Función de activación de la capa escondida
-    # capa_1 = tf.add(tf.matmul(x, pesos['h1']), sesgo['b1'])
-    # # activacion relu
-    # capa_1 = tf.nn.relu(capa_1)
-    # # Función de activación de la capa escondida
-    # capa_2 = tf.add(tf.matmul(capa_1, pesos['h2']), sesgo['b2'])
-    # # activación relu
-    # capa_2 = tf.nn.relu(capa_2)
-    # # Salida con activación lineal
-    # salida = tf.matmul(capa_2, pesos['out']) + sesgo['out']
-    # return salida
+#    summary_writer = tf.summary.FileWriter(logs_path, graph = tf.get_default_graph())
 
-# # Definimos los pesos y sesgo de cada capa.
-# pesos = {
-#     'h1': tf.Variable(tf.random_normal([n_entradas, n_oculta_1])),
-#     'h2': tf.Variable(tf.random_normal([n_oculta_1, n_oculta_2])),
-#     'out': tf.Variable(tf.random_normal([n_oculta_2, n_clases]))
-# }
-# sesgo = {
-#     'b1': tf.Variable(tf.random_normal([n_oculta_1])),
-#     'b2': tf.Variable(tf.random_normal([n_oculta_2])),
-#     'out': tf.Variable(tf.random_normal([n_clases]))
-# }
+    # The placeholders
+#    x = tf.placeholder("float", [20, n_entradas, 3],  name='DatosEntrada')
+#    y = tf.placeholder("float", [20, n_clases, 3], name='Clases')
 
-# with tf.name_scope('Modelo'):
-#     # Construimos el modelo
-#     pred = perceptron_multicapa(x, pesos, sesgo)
+    # Entrenamiento
+#    for epoca in range(epocas):
+#        avg_cost = 0
+#        lote_total = lote
 
-# with tf.name_scope('Costo'):
-#     # Definimos la funcion de costo
-#     costo = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=pred, labels=y))
+#        for i in range(lote_total):
+#            X, Y = images_to_tensor(path, mode, lote)
+            # Optimizacion por backprop y funcion de costo
+#            _, c, summary = sess.run([optimizador, costo, merged_summary_op], feed_dict = {x: X, y: Y})
+            # Escribimos la iteracion en los registros
+#            summary_writer.add_summary(summary, epoca * lote_total + i)
+#            avg_cost += c / lote_total
+#        if epoca % display_step == 0:
+#            print("Iteración: {0: 04d} costo = {1:.9f}".format(epoca + 1, avg_cost))
+#    print("Optimización Terminada!\n")
 
-# with tf.name_scope('optimizador'):
-#     # Algoritmo de optimización
-#     optimizar = tf.train.AdamOptimizer(
-#         learning_rate=tasa_aprendizaje).minimize(costo)
-
-# with tf.name_scope('Precision'):
-#     # Evaluar el modelo
-#     pred_correcta = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
-#     # Calcular la precisión
-#     Precision = tf.reduce_mean(tf.cast(pred_correcta, "float"))
-
-# # Inicializamos todas las variables
-# init = tf.global_variables_initializer()
-
-# # Crear sumarización para controlar el costo
-# tf.summary.scalar("Costo", costo)
-
-# # Juntar los resumenes en una sola operación
-# merged_summary_op = tf.summary.merge_all()
-
-
-# # Lanzamos la sesión
-# with tf.Session() as sess:
-#     sess.run(init)
-
-#     # op to write logs to Tensorboard
-#     summary_writer = tf.summary.FileWriter(
-#         logs_path, graph=tf.get_default_graph())
-
-#     # Entrenamiento
-#     for epoca in range(epocas):
-#         avg_cost = 0.
-#         # lote_total = int(mnist.train.num_examples/lote)
-#         lote_total = batch_size
-
-#         for i in range(lote_total):
-#             # lote_x, lote_y = mnist.train.next_batch(lote)
-#             lote_x = dataSet
-#             lote_y = labels
-#             # Optimización por backprop y funcion de costo
-#             _, c, summary = sess.run([optimizar, costo, merged_summary_op],
-#                                      feed_dict={x: lote_x, y: lote_y})
-#             # escribir logs en cada iteracion
-#             summary_writer.add_summary(summary, epoca * lote_total + i)
-#             # perdida promedio
-#             avg_cost += c / lote_total
-#         # imprimir información de entrenamiento
-#         if epoca % display_step == 0:
-#             print("Iteración: {0: 04d} costo = {1:.9f}".format(epoca+1,
-#                                                             avg_cost))
-#     print("Optimización Terminada!\n")
-
-#     #calcula precision con las imagenes de test
-#     # print("Precisión: {0:.2f}".format(Precision.eval({x: mnist.test.images, y: mnist.test.labels})))
-#     print("Precisión: {0:.2f}".format(Precision.eval({x: dataSet, y: labels})))
-
-# print('matriz de test')
-# print (mnist.test.images[0])
-# print('vector de test indica que es 7')
-# print (mnist.test.labels[0])
+    # Save your model
+#    saver.save(sess, 'my_tf_model')

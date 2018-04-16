@@ -17,7 +17,7 @@ print(type(mnist))
 # forma del dataset 55000 imagenes
 mnist.train.images.shape
 
-# cada imagen es un array de 28x28 con cada pixel 
+# cada imagen es un array de 28x28 con cada pixel
 # definido como escala de grises.
 digito1 = mnist.train.images[0].reshape((28, 28))
 nnn = type(digito1)
@@ -72,22 +72,22 @@ sesgo = {
 with tf.name_scope('Modelo'):
     # Construimos el modelo
     pred = perceptron_multicapa(x, pesos, sesgo)
-    
+
 with tf.name_scope('Costo'):
     # Definimos la funcion de costo
     costo = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=pred, labels=y))
-    
+
 with tf.name_scope('optimizador'):
     # Algoritmo de optimización
     optimizar = tf.train.AdamOptimizer(
         learning_rate=tasa_aprendizaje).minimize(costo)
-    
+
 with tf.name_scope('Precision'):
     # Evaluar el modelo
     pred_correcta = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
     # Calcular la precisión
     Precision = tf.reduce_mean(tf.cast(pred_correcta, "float"))
-    
+
 # Inicializamos todas las variables
 init = tf.global_variables_initializer()
 
@@ -101,11 +101,11 @@ merged_summary_op = tf.summary.merge_all()
 # Lanzamos la sesión
 with tf.Session() as sess:
     sess.run(init)
-    
+
     # op to write logs to Tensorboard
     summary_writer = tf.summary.FileWriter(
         logs_path, graph=tf.get_default_graph())
-    
+
     # Entrenamiento
     for epoca in range(epocas):
         avg_cost = 0.
@@ -122,10 +122,9 @@ with tf.Session() as sess:
             avg_cost += c / lote_total
         # imprimir información de entrenamiento
         if epoca % display_step == 0:
-            print("Iteración: {0: 04d} costo = {1:.9f}".format(epoca+1, 
-                                                            avg_cost))
+            print("Iteración: {0: 04d} costo = {1:.9f}".format(epoca + 1, avg_cost))
     print("Optimización Terminada!\n")
-    
+
     #calcula precision con las imagenes de test
     print("Precisión: {0:.2f}".format(Precision.eval({x: mnist.test.images,
                                                 y: mnist.test.labels})))
@@ -134,9 +133,3 @@ print('matriz de test')
 print (mnist.test.images[0])
 print('vector de test indica que es 7')
 print (mnist.test.labels[0])
-    
-
-
-
-
-
