@@ -12,11 +12,12 @@ import pandas as pd
 
 # Obteniendo dataset
 # Data paths
-path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+# path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+path = r"C:\Users\Tredok Vayntrub\Documents\GitHub\aprendizaje\Proyecto02\images.txt"
 mode = 'file'
 
 
-    
+
 # cada imagen es un array de 800x800 con cada pixel
 # definido como escala de grises.
 #digito1 = dataSet[0].reshape((800, 800))
@@ -30,6 +31,7 @@ learning_rate = 0.001
 epocas = 15
 lote = 50
 display_step = 100
+num_steps = 10000
 logs_path = "/tmp/tensorflow_logs/perceptron"
 dropout = 0.75
 # Parametros de la red
@@ -72,7 +74,7 @@ def conv_net(x, n_classes, dropout, reuse, is_training):
         out = tf.layers.dense(fc1, n_classes)
         # We only aply softmax to testing network
         out = tf.nn.softmax(out) if not is_training else out
-        
+
     return out
 
 # Create a graph for training
@@ -98,10 +100,10 @@ saver = tf.train.Saver()
 
 # Start training
 with tf.Session() as sess:
-    
+
     # Run the initializer
     sess.run(init)
-    
+
     # Start the data queue
     tf.train.start_queue_runners()
 
@@ -189,7 +191,7 @@ with tf.Session() as sess:
 #         avg_cost = 0.
 #         # lote_total = int(mnist.train.num_examples/lote)
 #         lote_total = batch_size
-        
+
 #         for i in range(lote_total):
 #             # lote_x, lote_y = mnist.train.next_batch(lote)
 #             lote_x = dataSet
