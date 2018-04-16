@@ -10,37 +10,27 @@ import numpy as np
 #import matplotlib.cm as cm
 import pandas as pd
 
-# Obteniendo dataset
-# Data paths
-# path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
-path = r"C:\Users\Tredok Vayntrub\Documents\GitHub\aprendizaje\Proyecto02\images.txt"
-mode = 'file'
-
-
-
-# cada imagen es un array de 800x800 con cada pixel
-# definido como escala de grises.
-#digito1 = dataSet[0].reshape((800, 800))
-
-# visualizando el primer digito
-#plt.imshow(digito1, cmap = cm.Greys)
-#plt.show()
-
+logs_path = "/tmp/tensorflow_logs/perceptron"
 # Parametros
 learning_rate = 0.001
-epocas = 15
-lote = 50
+epocas = 5
 display_step = 100
-num_steps = 10000
-logs_path = "/tmp/tensorflow_logs/perceptron"
+num_steps = 500
 dropout = 0.75
-# Parametros de la red
-n_oculta_1 = 256 # 1ra capa de atributos
-n_oculta_2 = 256 # 2ra capa de atributos
-n_entradas = 640000 # datos de MNIST(forma img: 28*28)
 n_clases = 2 # Total de clases a clasificar (1 o 0)
+lote = 20
+# Parametros de la red
+#n_oculta_1 = 256 # 1ra capa de atributos
+#n_oculta_2 = 256 # 2ra capa de atributos
+#n_entradas = 640000 # datos de MNIST(forma img: 28*28)
 
-# Obtenemos nuestro dataset
+
+# Decimos el modo en el que está descrito el dataset y su directorio y archivo
+path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+# path = r"C:\Users\Tredok Vayntrub\Documents\GitHub\aprendizaje\Proyecto02\images.txt"
+mode = 'file'
+
+# Obtenemos el dataset
 X, Y = images_to_tensor(path, mode, lote)
 
 # input para los grafos
@@ -52,24 +42,26 @@ X, Y = images_to_tensor(path, mode, lote)
 # Creamos el modelo
 def conv_net(x, n_classes, dropout, reuse, is_training):
     with tf.variable_scope('ConvNet', reuse = reuse):
-
+        print("Convoluting and pooling")
         # Convolution layer with 32 filters and a kernel size of 400
-        conv1 = tf.layers.conv2d(x, 32, 400, activation = tf.nn.relu)
+        conv1 = tf.layers.conv2d(x, 32, 5, activation = tf.nn.relu)
         # Pooling layer with strides of 5 and a kernel size of 40
-        pool1 = tf.layers.max_pooling2d(conv1, 40, 5)
+        pool1 = tf.layers.max_pooling2d(conv1, 2, 2)
 
         # Convolution layer 2 with 32 filters and a kernel sizze of 200
-        conv2 = tf.layers.conv2d(conv1, 32, 200, activation = tf.nn.relu)
+        conv2 = tf.layers.conv2d(conv1, 64, 3, activation = tf.nn.relu)
         # Pooling layer with strides of 5 and a kernel of 20
-        pool2 = tf.layers.max_pooling2d(conv2, 20, 5)
+        pool2 = tf.layers.max_pooling2d(conv2, 2, 2)
 
         # Flatten the data to a 1-D vector for the fully connected layer
         fc1 = tf.contrib.layers.flatten(conv2)
         # Fully connected layer (in contrib folder for now)
-        fc1 = tf.layers.dense(fc1, 1024)
+        print("dense layer")
+        fc1 = tf.layers.dense(fc1, 512)
         # Apply dropout (if is_training is false, dropout is not applied)
         fc1 = tf.layers.dropout(fc1, rate = dropout, training = is_training)
 
+        print("prediction layer")
         # Output layer, class prediction
         out = tf.layers.dense(fc1, n_classes)
         # We only aply softmax to testing network
@@ -77,14 +69,15 @@ def conv_net(x, n_classes, dropout, reuse, is_training):
 
     return out
 
+
 # Create a graph for training
 logits_train = conv_net(X, n_clases, dropout, reuse=False, is_training=True)
 # Create another graph for testing that reuse the same weights
 logits_test = conv_net(X, n_clases, dropout, reuse=True, is_training=False)
 
 # Define loss and optimizer (with train logits, for dropout to take effect)
-loss_op = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
-    logits=logits_train, labels=Y))
+loss_op = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits_train,
+                                                                        labels=Y))
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
 train_op = optimizer.minimize(loss_op)
 
@@ -103,6 +96,7 @@ with tf.Session() as sess:
 
     # Run the initializer
     sess.run(init)
+    print("Starting session")
 
     # Start the data queue
     tf.train.start_queue_runners()
