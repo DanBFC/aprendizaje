@@ -10,6 +10,9 @@ import pandas as pd
 # importando el dataset
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+print("aqui está la caca")
+print(type(mnist))
+
 
 # forma del dataset 55000 imagenes
 mnist.train.images.shape
