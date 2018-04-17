@@ -21,10 +21,7 @@ dropout = 0.75
 n_clases = 2 # Total de clases a clasificar (1 o 0)
 n_entradas = 22500
 lote = 20
-# Parametros de la red
-#n_oculta_1 = 256 # 1ra capa de atributos
-#n_oculta_2 = 256 # 2ra capa de atributos
-#n_entradas = 640000 # datos de MNIST(forma img: 28*28)
+
 
 
 # Decimos el modo en el que está descrito el dataset y su directorio y archivo
@@ -35,6 +32,7 @@ mode = 'file'
 # Obtenemos el dataset
 X, Y = images_to_tensor(path, mode, lote)
 
+# Variables no usadas, tengo que revisar qué hacen bien.
 # input para los grafos
 #x = tf.placeholder("float", [None, n_entradas],  name='DatosEntrada')
 #y = tf.placeholder("float", [None, n_clases], name='Clases')
