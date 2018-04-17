@@ -1,3 +1,4 @@
+# coding=utf-8
 import os, sys
 import tensorflow as tf
 
@@ -16,8 +17,8 @@ def image_reader(path_to_curie, label):
 
 # This just create a file to indicate the labels and path + name of the images.
 def image_file_creator():
-    curiePath = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
-    nonCuriePath = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
+    curiePath = "/home/daniel/Documentos/Ciencias/aprendizaje/proyectos/aprendizaje/Proyecto02/Curie/"
+    nonCuriePath = "/home/daniel/Documentos/Ciencias/aprendizaje/proyectos/aprendizaje/Proyecto02/nonCurie/"
 
     curieImages = os.listdir(curiePath)
     nonCurieImages = os.listdir(nonCuriePath)
@@ -30,12 +31,12 @@ def image_file_creator():
 
 # This reads the images and transforms them into TFRecord
 def images_to_tensor(dataset_path, mode, batch_size):
-    
+
     CHANNELS = 3
     IMG_HEIGHT = 800
     IMG_WIDTH = 800
     N_CLASSES = 2
-    
+
     imagepaths, labels = list(), list()
     if mode == 'file':
         data = open(dataset_path, 'r').read().splitlines()
@@ -104,4 +105,3 @@ def images_to_tensor(dataset_path, mode, batch_size):
     # nonCurie_DataSet = image_reader(path_to_nonCurie, 0)
     # print nonCurie_DataSet + curie_DataSet
     # print curie_DataSet
-

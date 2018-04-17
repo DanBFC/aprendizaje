@@ -1,3 +1,4 @@
+# coding=utf-8
 # importamos la libreria
 import tensorflow as tf
 
@@ -12,11 +13,13 @@ import pandas as pd
 
 # Obteniendo dataset
 # Data paths
-path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+path = "/home/daniel/Documentos/Ciencias/aprendizaje/proyectos/aprendizaje/Proyecto02/images.txt"
 mode = 'file'
 batch_size = 4
 dataSet, labels = images_to_tensor(path, mode, batch_size)
-    
+#image_file_creator()
+#images_to_tensor(path, mode, batch_size)
+
 # cada imagen es un array de 800x800 con cada pixel
 # definido como escala de grises.
 #digito1 = dataSet[0].reshape((800, 800))
@@ -34,7 +37,7 @@ logs_path = "/tmp/tensorflow_logs/perceptron"
 
 # Parametros de la red
 n_oculta_1 = 256 # 1ra capa de atributos
-n_ocultan_2 = 256 # 2ra capa de atributos
+n_oculta_2 = 256 # 2ra capa de atributos
 n_entradas = 640000 # datos de MNIST(forma img: 28*28)
 n_clases = 2 # Total de clases a clasificar (1 o 0)
 
@@ -98,38 +101,70 @@ merged_summary_op = tf.summary.merge_all()
 
 
 # Lanzamos la sesión
+#with tf.Session() as sess:
+#    sess.run(init)
+#
+#    # op to write logs to Tensorboard
+#    summary_writer = tf.summary.FileWriter(
+#        logs_path, graph=tf.get_default_graph())
+#
+#    # Entrenamiento
+#    for epoca in range(epocas):
+#        avg_cost = 0.
+#        lote_total = int(mnist.train.num_examples/lote)
+#
+#        for i in range(lote_total):
+#            lote_x, lote_y = mnist.train.next_batch(lote)
+#            # Optimización por backprop y funcion de costo
+#            _, c, summary = sess.run([optimizar, costo, merged_summary_op],
+#                                     feed_dict={x: lote_x, y: lote_y})
+#            # escribir logs en cada iteracion
+#            summary_writer.add_summary(summary, epoca * lote_total + i)
+#            # perdida promedio
+#            avg_cost += c / lote_total
+#        # imprimir información de entrenamiento
+#        if epoca % display_step == 0:
+#            print("Iteración: {0: 04d} costo = {1:.9f}".format(epoca+1,
+#                                                            avg_cost))
+#    print("Optimización Terminada!\n")
+#
+#    #calcula precision con las imagenes de test
+#    print("Precisión: {0:.2f}".format(Precision.eval({x: mnist.test.images,
+#                                                y: mnist.test.labels})))
+#
+#print('matriz de test')
+#print (mnist.test.images[0])
+#print('vector de test indica que es 7')
+#print (mnist.test.labels[0])
+
+# Start training
 with tf.Session() as sess:
+
+    # Run the initializer
     sess.run(init)
 
-    # op to write logs to Tensorboard
-    summary_writer = tf.summary.FileWriter(
-        logs_path, graph=tf.get_default_graph())
+    # Start the data queue
+    #tf.train.start_queue_runners()
 
-    # Entrenamiento
-    for epoca in range(epocas):
-        avg_cost = 0.
-        lote_total = int(mnist.train.num_examples/lote)
+    # Training cycle
+    for step in range(epocas):
 
-        for i in range(lote_total):
-            lote_x, lote_y = mnist.train.next_batch(lote)
-            # Optimización por backprop y funcion de costo
-            _, c, summary = sess.run([optimizar, costo, merged_summary_op],
-                                     feed_dict={x: lote_x, y: lote_y})
-            # escribir logs en cada iteracion
-            summary_writer.add_summary(summary, epoca * lote_total + i)
-            # perdida promedio
-            avg_cost += c / lote_total
-        # imprimir información de entrenamiento
-        if epoca % display_step == 0:
-            print("Iteración: {0: 04d} costo = {1:.9f}".format(epoca+1,
-                                                            avg_cost))
-    print("Optimización Terminada!\n")
+        if step % display_step == 0:
+#            # Optimización por backprop y funcion de costo
+#            _, c, summary = sess.run([optimizar, costo, merged_summary_op],
+#                                     feed_dict={x: lote_x, y: lote_y})
+#            # escribir logs en cada iteracion
+            # Run optimization and calculate batch loss and accuracy
+            ##_, loss, acc = sess.run([train_op, loss_op, accuracy])
+            _, c, acc = sess.run([optimizar, costo, merged_summary_op])
+            ##print("Step " + str(step) + ", Minibatch Loss= " + \
+            ##      "{:.4f}".format(loss) + ", Training Accuracy= " + \
+            ##      "{:.3f}".format(acc))
+            print("Step " + str(step) + ", Minibatch Loss= " + \
+                  "{:.4f}".format(c) + ", Training Accuracy= " + \
+                  "{:.3f}".format(acc))
+        ##else:
+        ##    # Only run the optimization op (backprop)
+        ##    sess.run(train_op)
 
-    #calcula precision con las imagenes de test
-    print("Precisión: {0:.2f}".format(Precision.eval({x: mnist.test.images,
-                                                y: mnist.test.labels})))
-
-print('matriz de test')
-print (mnist.test.images[0])
-print('vector de test indica que es 7')
-print (mnist.test.labels[0])
+    print("Optimization Finished!")
