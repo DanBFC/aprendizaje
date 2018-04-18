@@ -2,7 +2,7 @@
 import tensorflow as tf
 
 # importar el programa que regresa los arreglos de las imagenes
-from image_loader import images_to_tensor
+from image_loader import images_to_tensor, image_tensor_test
 
 # importamos librerias adicionales
 import numpy as np
@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 #logs_path = "/tmp/tensorflow_logs/perceptron"
-logs_path = r"\perceptron"
+logs_path = "/perceptron"
 # Parametros
 learning_rate = 0.01
 epocas = 20
@@ -24,27 +24,24 @@ lote = 100
 
 
 
-# Decimos el modo en el que está descrito el dataset y su directorio y archivo
-# path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
-saver_path = r"D:\\Documents\\aprendizaje\\Proyecto02\\Log\\kittyModel"
-path = r"D:\Documents\aprendizaje\Proyecto02\images.txt"
+# Decimos el modo en el que est descrito el dataset y su directorio y archivo
+# Test path linux
+saver_path = "/home/tredok/Documents/aprendizaje/Proyecto02/Log/KittyModel"
+path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+
+# Test path windows
+#saver_path = r"D:\\Documents\\aprendizaje\\Proyecto02\\Log\\kittyModel"
+#path = r"D:\Documents\aprendizaje\Proyecto02\images.txt"
 
 # Test paths
-pathtest = r"D:\Documents\aprendizaje\Proyecto02\images_test.txt"
+# test path linux
+pathtest = "/home/tredok/Documents/aprendizaje/Proyecto02/images_test.txt"
+#pathtest = r"D:\Documents\aprendizaje\Proyecto02\images_test.txt"
 mode = 'file'
 
 # Obtenemos el dataset
 X, Y = images_to_tensor(path, mode, lote)
-test_image, test_label = images_to_tensor(pathtest, mode, 1)
-tipi = type(test_image)
-print("aqui esta tipiiiiiiiiiiiiiiiiiiiiiii")
-print(tipi)
-# Variables no usadas, tengo que revisar qué hacen bien.
-# input para los grafos
-#x = tf.placeholder("float", [None, n_entradas],  name='DatosEntrada')
-#y = tf.placeholder("float", [None, n_clases], name='Clases')
-# x = conv_net(X, n_clases, dropout, reuse = False, is_Training = True)
-# y = conv_net(X, n_clases, dropout, reuse = True, is_Training = False)
+test_image, test_label = image_tensor_test(pathtest, mode)
 
 # Creamos el modelo
 def conv_net(x, n_classes, dropout, reuse, is_training):
@@ -56,7 +53,7 @@ def conv_net(x, n_classes, dropout, reuse, is_training):
         pool1 = tf.layers.max_pooling2d(conv1, 2, 2)
 
         # Convolution layer 2 with 32 filters and a kernel sizze of 200
-        conv2 = tf.layers.conv2d(conv1, 64, 3, activation = tf.nn.relu)
+        conv2 = tf.layers.conv2d(conv1, 32, 3, activation = tf.nn.relu)
         # Pooling layer with strides of 5 and a kernel of 20
         pool2 = tf.layers.max_pooling2d(conv2, 2, 2)
 
@@ -64,7 +61,7 @@ def conv_net(x, n_classes, dropout, reuse, is_training):
         fc1 = tf.contrib.layers.flatten(conv2)
         # Fully connected layer (in contrib folder for now)
         print("dense layer")
-        fc1 = tf.layers.dense(fc1, 512)
+        fc1 = tf.layers.dense(fc1, 1024)
         # Apply dropout (if is_training is false, dropout is not applied)
         fc1 = tf.layers.dropout(fc1, rate = dropout, training = is_training)
 

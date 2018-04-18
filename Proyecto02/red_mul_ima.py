@@ -29,8 +29,8 @@ print(nnn)
 # Parametros
 tasa_aprendizaje = 0.001
 epocas = 15
-lote = 100
-display_step = 1
+lote = 50
+display_step = 5
 logs_path = "/tmp/tensorflow_logs/perceptron"
 
 # Parametros de la red
