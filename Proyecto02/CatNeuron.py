@@ -11,27 +11,34 @@ import numpy as np
 import pandas as pd
 
 #logs_path = "/tmp/tensorflow_logs/perceptron"
-logs_path = r"D:\Documents\aprendizaje\Proyecto02\perceptron"
+logs_path = r"\perceptron"
 # Parametros
-learning_rate = 0.001
-epocas = 5
-display_step = 100
-num_steps = 500
+learning_rate = 0.01
+epocas = 20
+display_step = 1
+num_steps = 1
 dropout = 0.75
 n_clases = 2 # Total de clases a clasificar (1 o 0)
 n_entradas = 22500
-lote = 20
+lote = 100
 
 
 
 # Decimos el modo en el que está descrito el dataset y su directorio y archivo
 # path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+saver_path = r"D:\\Documents\\aprendizaje\\Proyecto02\\Log\\kittyModel"
 path = r"D:\Documents\aprendizaje\Proyecto02\images.txt"
+
+# Test paths
+pathtest = r"D:\Documents\aprendizaje\Proyecto02\images_test.txt"
 mode = 'file'
 
 # Obtenemos el dataset
 X, Y = images_to_tensor(path, mode, lote)
-
+test_image, test_label = images_to_tensor(pathtest, mode, 1)
+tipi = type(test_image)
+print("aqui esta tipiiiiiiiiiiiiiiiiiiiiiii")
+print(tipi)
 # Variables no usadas, tengo que revisar qué hacen bien.
 # input para los grafos
 #x = tf.placeholder("float", [None, n_entradas],  name='DatosEntrada')
@@ -87,20 +94,27 @@ with tf.name_scope('optimizador'):
 
 # Evaluate model (with test logits, for dropout to be disabled)
 with tf.name_scope('Presicion'):
-    # pred_correcta = tf.equal(tf.argmax(logits_test, 1), tf.cast(Y, tf.int64))
+    pred_correcta = tf.equal(tf.argmax(logits_test, 1), tf.cast(Y, tf.int64))
     # Evaluar el modelo
-    pred_correcta = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
+    # pred_correcta = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
     # Calcular la presicion
     accuracy = tf.reduce_mean(tf.cast(pred_correcta, "float"))
 
-# Se inicializan las variables
+# Seinicializan las variables
 init = tf.global_variables_initializer()
-# Crear la sumarizacin para controlar el Costo
+
+
+# Crear la sumarizacion para controlar el Costo
 tf.summary.scalar("Costo", costo)
 # Juntar los resumenes en una sola operacion
 merged_summary_op = tf.summary.merge_all()
 # Saver object
 saver = tf.train.Saver()
+
+# input para los grafos
+x = tf.placeholder(tf.float32, shape = (150, 150))
+y = tf.placeholder(tf.float32, shape = (150, 150))
+
 
 # Start training
 with tf.Session() as sess:
@@ -126,30 +140,10 @@ with tf.Session() as sess:
             sess.run(train_op)
     print("Optimization Finished!")
 
-    # Save your model
-    saver.save(sess, 'my_tf_model')
-
-#    summary_writer = tf.summary.FileWriter(logs_path, graph = tf.get_default_graph())
-
-    # The placeholders
-#    x = tf.placeholder("float", [20, n_entradas, 3],  name='DatosEntrada')
-#    y = tf.placeholder("float", [20, n_clases, 3], name='Clases')
-
-    # Entrenamiento
-#    for epoca in range(epocas):
-#        avg_cost = 0
-#        lote_total = lote
-
-#        for i in range(lote_total):
-#            X, Y = images_to_tensor(path, mode, lote)
-            # Optimizacion por backprop y funcion de costo
-#            _, c, summary = sess.run([optimizador, costo, merged_summary_op], feed_dict = {x: X, y: Y})
-            # Escribimos la iteracion en los registros
-#            summary_writer.add_summary(summary, epoca * lote_total + i)
-#            avg_cost += c / lote_total
-#        if epoca % display_step == 0:
-#            print("Iteración: {0: 04d} costo = {1:.9f}".format(epoca + 1, avg_cost))
-#    print("Optimización Terminada!\n")
+    # Calcular
+    print("Running a test")
+    print("Presicion: {0: 2f}".format(accuracy.eval({x: test_image, y: test_label})))
 
     # Save your model
-#    saver.save(sess, 'my_tf_model')
+    saved_path = saver.save(sess, saver_path)
+    print("kitty model saved at: %s" % saved_path)

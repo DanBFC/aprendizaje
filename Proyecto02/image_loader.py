@@ -1,23 +1,14 @@
 import os, sys
 import tensorflow as tf
-
-
-# This creates an array with the images.
-def image_reader(path_to_curie, label):
-    curieArray = []
-    curieImages = os.listdir(path_to_curie)
-
-    for image in curieImages:
-        #print image
-        curie = open(path_to_curie + image, 'r+')
-        curieArray.append([curie, label])
-    return curieArray
+import numpy as np
 
 
 # This just create a file to indicate the labels and path + name of the images.
 def image_file_creator():
-    curiePath = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
-    nonCuriePath = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
+    #curiePath = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
+    #nonCuriePath = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
+    curiePath = r"D:\\Documents\\aprendizaje\\Proyecto02\Curie\\"
+    nonCuriePath = r"D:\\Documents\\aprendizaje\\Proyecto02\\nonCurie\\"
 
     curieImages = os.listdir(curiePath)
     nonCurieImages = os.listdir(nonCuriePath)
@@ -28,6 +19,7 @@ def image_file_creator():
         for img in nonCurieImages:
             f.write(nonCuriePath + img + " " + str(0) + "\n")
 
+
 # This reads the images and transforms them into TFRecord
 def images_to_tensor(dataset_path, mode, batch_size):
 
@@ -35,6 +27,7 @@ def images_to_tensor(dataset_path, mode, batch_size):
     IMG_HEIGHT = 150
     IMG_WIDTH = 150
     N_CLASSES = 2
+    print('entro')
 
     imagepaths, labels = list(), list()
     if mode == 'file':
@@ -81,12 +74,11 @@ def images_to_tensor(dataset_path, mode, batch_size):
     # Create batches
     X, Y = tf.train.batch([image, label],
                           batch_size=batch_size,
-                          capacity=batch_size * 8,
-                          num_threads=4)
+                          capacity=batch_size * 8)
 
     return X, Y
 
-# if __name__ == "__main__":
+#if __name__ == "__main__":
 #     path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
 #     path_to_nonCurie = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
 
@@ -99,8 +91,4 @@ def images_to_tensor(dataset_path, mode, batch_size):
 
 #     print "here is y"
 #     print y
-    # image_file_creator()
-    # curie_DataSet = image_reader(path_to_curie, 1)
-    # nonCurie_DataSet = image_reader(path_to_nonCurie, 0)
-    # print nonCurie_DataSet + curie_DataSet
-    # print curie_DataSet
+    #image_file_creator()
