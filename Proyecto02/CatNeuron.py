@@ -26,17 +26,19 @@ lote = 100
 
 # Decimos el modo en el que est descrito el dataset y su directorio y archivo
 # Test path linux
-saver_path = "/home/tredok/Documents/aprendizaje/Proyecto02/Log/KittyModel"
-path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
+#saver_path = "/home/tredok/Documents/aprendizaje/Proyecto02/Log/KittyModel"
+#path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
 
 # Test path windows
-#saver_path = r"D:\\Documents\\aprendizaje\\Proyecto02\\Log\\kittyModel"
-#path = r"D:\Documents\aprendizaje\Proyecto02\images.txt"
+saver_path = r"D:\\Documents\\aprendizaje\\Proyecto02\\Log\\kittyModel"
+path = r"D:\Documents\aprendizaje\Proyecto02\filesImages\images.txt"
 
 # Test paths
 # test path linux
-pathtest = "/home/tredok/Documents/aprendizaje/Proyecto02/images_test.txt"
-#pathtest = r"D:\Documents\aprendizaje\Proyecto02\images_test.txt"
+#pathtest = "/home/tredok/Documents/aprendizaje/Proyecto02/filesImages/images_test.txt"
+
+# test path windows
+pathtest = r"D:\Documents\aprendizaje\Proyecto02\filesImages\images_test.txt"
 mode = 'file'
 
 # Obtenemos el dataset
@@ -109,8 +111,8 @@ merged_summary_op = tf.summary.merge_all()
 saver = tf.train.Saver()
 
 # input para los grafos
-x = tf.placeholder(tf.float32, shape = (150, 150))
-y = tf.placeholder(tf.float32, shape = (150, 150))
+x = tf.placeholder(tf.float32, shape = (1, 150, 150, 3))
+y = tf.placeholder(tf.float32, shape = (1, 150, 150, 3))
 
 
 # Start training
@@ -139,8 +141,8 @@ with tf.Session() as sess:
 
     # Calcular
     print("Running a test")
-    print("Presicion: {0: 2f}".format(accuracy.eval({x: test_image, y: test_label})))
+    print("Presicion: {0: 2f}".format(accuracy.eval({x: test_image})))
 
     # Save your model
-    saved_path = saver.save(sess, saver_path)
-    print("kitty model saved at: %s" % saved_path)
+    #saved_path = saver.save(sess, saver_path)
+    #print("kitty model saved at: %s" % saved_path)

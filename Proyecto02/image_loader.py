@@ -6,12 +6,12 @@ import numpy as np
 # This just create a file to indicate the labels and path + name of the images.
 def image_file_creator():
     # linux paths
-    curiePath = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
-    nonCuriePath = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
-    
+#    curiePath = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
+#    nonCuriePath = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
+
     # Windows paths
-    # curiePath = r"D:\\Documents\\aprendizaje\\Proyecto02\Curie\\"
-    # nonCuriePath = r"D:\\Documents\\aprendizaje\\Proyecto02\\nonCurie\\"
+    curiePath = r"D:\\Documents\aprendizaje\Proyecto02\curieImages\Curie\\"
+    nonCuriePath = r"D:\\Documents\aprendizaje\Proyecto02\nonCurie\\"
 
     curieImages = os.listdir(curiePath)
     nonCurieImages = os.listdir(nonCuriePath)
@@ -151,4 +151,4 @@ def image_tensor_test(dataset_path, mode):
 
 #     print "here is y"
 #     print y
-    #image_file_creator()
+#    image_file_creator()
