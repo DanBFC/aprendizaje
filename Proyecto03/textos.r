@@ -30,12 +30,12 @@ plot(clusterw, hang = -1)
 #kmeans example
 
 
-#kfit = kmeans(distancias, 2, nstart = 200)
-#library(cluster)
-#clusplot(as.matrix(distancias), kfit$cluster, color = T, shade = T, labels = 2, lines = 0)
+kfit = kmeans(distancias, 3, nstart = 200)
+library(cluster)
+clusplot(as.matrix(distancias), kfit$cluster, color = T, shade = T, labels = 2, lines = 0)
 
-#wss <- 2:29
+wss <- 2:29
 
-#for( i in 2:29) wss[i] <- sum(kmeans(distancias, centers = i, nstart = 25)$withinss)
-#plot(2:29, wss[2:29], type = "b", xlab = "Number of clusters", ylab = "within groups sum of squares")
+for( i in 2:29) wss[i] <- sum(kmeans(distancias, centers = i, nstart = 25)$withinss)
+plot(2:29, wss[2:29], type = "b", xlab = "Number of clusters", ylab = "within groups sum of squares")
 
