@@ -30,7 +30,7 @@ plot(clusterw, hang = -1)
 #kmeans example
 
 
-kfit = kmeans(distancias, 3, nstart = 200)
+kfit = kmeans(distancias, 7, nstart = 200)
 library(cluster)
 clusplot(as.matrix(distancias), kfit$cluster, color = T, shade = T, labels = 2, lines = 0)
 
