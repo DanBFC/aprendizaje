@@ -30,15 +30,15 @@ lote = 100
 #path = "/home/tredok/Documents/aprendizaje/Proyecto02/images.txt"
 
 # Test path windows
-saver_path = r"D:\\Documents\\aprendizaje\\Proyecto02\\Log\\kittyModel"
-path = r"D:\Documents\aprendizaje\Proyecto02\filesImages\images.txt"
+saver_path = r"D:\\Documents\GitHub\aprendizaje\\Proyecto02\\Log\\kittyModel"
+path = r"D:\Documents\GitHub\aprendizaje\Proyecto02\filesImages\images.txt"
 
 # Test paths
 # test path linux
 #pathtest = "/home/tredok/Documents/aprendizaje/Proyecto02/filesImages/images_test.txt"
 
 # test path windows
-pathtest = r"D:\Documents\aprendizaje\Proyecto02\filesImages\images_test.txt"
+pathtest = r"D:\Documents\GitHub\aprendizaje\Proyecto02\filesImages\images_test.txt"
 mode = 'file'
 
 # Obtenemos el dataset

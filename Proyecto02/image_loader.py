@@ -10,8 +10,8 @@ def image_file_creator():
 #    nonCuriePath = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
 
     # Windows paths
-    curiePath = r"D:\\Documents\aprendizaje\Proyecto02\curieImages\Curie\\"
-    nonCuriePath = r"D:\\Documents\aprendizaje\Proyecto02\nonCurie\\"
+    curiePath = r"D:\\Documents\GitHub\aprendizaje\Proyecto02\curieImages\Curie\\"
+    nonCuriePath = r"D:\\Documents\GitHub\aprendizaje\Proyecto02\nonCurie\\"
 
     curieImages = os.listdir(curiePath)
     nonCurieImages = os.listdir(nonCuriePath)

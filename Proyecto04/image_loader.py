@@ -138,7 +138,7 @@ def image_tensor_test(dataset_path, mode):
     return X, Y
 
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
 #     path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"
 #     path_to_nonCurie = "/home/tredok/Documents/aprendizaje/Proyecto02/nonCurie/"
 
@@ -151,4 +151,4 @@ if __name__ == "__main__":
 
 #     print "here is y"
 #     print y
-    image_file_creator()
+#    image_file_creator()
