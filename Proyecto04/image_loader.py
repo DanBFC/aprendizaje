@@ -137,6 +137,36 @@ def image_tensor_test(dataset_path, mode):
 
     return X, Y
 
+def get_dataset(dataset_path, batch_size):
+    imagepaths, labels = list(), list()
+    # Read the file with the dataset image paths and their labels
+    data = open(dataset_path,  'r').read().splitlines()
+    # Get the files and their labels
+    for line in data:
+        imagespaths.append(line.split(' ')[0])
+        labels.append(int(line.split(' ')[1]))
+    imagepaths = tf.constant(imagepaths)
+    labels = tf.constant(labels)
+    # Create a dataset returning slices of 'filenames'
+    dataset = tf.data.Dataset.from_tensor_slices((filesnames, labels))
+
+    dataset = dataset.map(_parse_function)
+    dataset = dataset.batch(batch_size)
+
+    # create iterator and final input tensor
+    iterator = dataset.make_one_shot_iterator()
+    images, labels = iterator.get_next()
+
+    return images, labels
+
+# parse every image in the data set using 'map'
+# Auxiliar method for 'dataset'
+def _parse_function(filename, label):
+    image_string = tf.read_file(filename)
+    images_decoded = tf.image.decode_jpeg(image_string, channels = 3)
+    image = tf.cast(image_decoded, tf.float32)
+    return image, label
+
 
 #if __name__ == "__main__":
 #     path_to_curie = "/home/tredok/Documents/aprendizaje/Proyecto02/Curie/"

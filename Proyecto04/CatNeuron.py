@@ -2,7 +2,7 @@
 import tensorflow as tf
 
 # importar el programa que regresa los arreglos de las imagenes
-from image_loader import images_to_tensor, image_tensor_test
+from image_loader import images_to_tensor, image_tensor_test, get_dataset
 
 # importamos librerias adicionales
 import numpy as np
@@ -55,8 +55,8 @@ test_image, test_label = image_tensor_test(pathtest, mode)
 # input para los grafos
 # x = tf.placeholder(tf.float32, shape = (1, 150, 150, 3))
 # y = tf.placeholder(tf.float32, shape = (1, 150, 150, 3))
-x = tf.placeholder("float", [None, None], name = 'batch')
-y = tf.placeholder("float", [None, None], name = 'Clases')
+x = tf.placeholder("float", [n_entradas, None], name = 'entradas')
+y = tf.placeholder("float", [clases, None], name = 'Clases')
 
 def multilayer_perceptron(x, peso, sesgo):
     capa_1 = tf.add(tf.matmul(x, pesos['h1']), sesgo['b1'])
@@ -94,36 +94,6 @@ sesgo = {
     'out': tf.Variable(tf.random_normal([clases]))
 }
 
-# Creamos el modelo
-def conv_net(x, n_classes, dropout, reuse, is_training):
-    with tf.variable_scope('ConvNet', reuse = reuse):
-        print("Convoluting and pooling")
-        # Convolution layer with 32 filters and a kernel size of 400
-        conv1 = tf.layers.conv2d(x, 32, 5, activation = tf.nn.relu)
-        # Pooling layer with strides of 5 and a kernel size of 40
-        pool1 = tf.layers.max_pooling2d(conv1, 2, 2)
-
-        # Convolution layer 2 with 32 filters and a kernel sizze of 200
-        conv2 = tf.layers.conv2d(conv1, 32, 3, activation = tf.nn.relu)
-        # Pooling layer with strides of 5 and a kernel of 20
-        pool2 = tf.layers.max_pooling2d(conv2, 2, 2)
-
-        # Flatten the data to a 1-D vector for the fully connected layer
-        fc1 = tf.contrib.layers.flatten(conv2)
-        # Fully connected layer (in contrib folder for now)
-        print("dense layer")
-        fc1 = tf.layers.dense(fc1, 1024)
-        # Apply dropout (if is_training is false, dropout is not applied)
-        fc1 = tf.layers.dropout(fc1, rate = dropout, training = is_training)
-
-        print("prediction layer")
-        # Output layer, class prediction
-        out = tf.layers.dense(fc1, n_classes)
-        # We only aply softmax to testing network
-        out = tf.nn.softmax(out) if not is_training else out
-
-    return out
-
 # Create a graph for training
 with tf.name_scope('Modelo'):
     pred = multilayer_perceptron(x, pesos, sesgo)
@@ -137,7 +107,7 @@ with tf.name_scope('costo'):
 
 # Algoritmo de optimimzacion
 with tf.name_scope('optimizador'):
-    optimizador = tf.train.AdamOptimizer(learning_rate=learning_rate)
+    optimizador = tf.train.AdamOptimizer(learning_rate = learning_rate)
     train_op = optimizador.minimize(costo)
 
 # Evaluate model (with test logits, for dropout to be disabled)
@@ -160,14 +130,14 @@ merged_summary_op = tf.summary.merge_all()
 # Saver object
 saver = tf.train.Saver()
 
-x1 = tf.placeholder("float", [50, 150, 150, 3], name = 'batch_3')
-y1 = tf.placeholder("float", [None, None, None, None], name = 'Clases')
-
+#x1 = tf.placeholder("float", [n_entradas, None], name = 'batch_3')
+#y1 = tf.placeholder("float", [clases, None], name = 'Clases')
 
 # Start training
 with tf.Session() as sess:
     # Run the initializer
     sess.run(init)
+    #sess.run([images, labels])
 
     print("Starting session")
 
@@ -182,7 +152,7 @@ with tf.Session() as sess:
         for i in range(lote_total):
             lote_x, lote_y = X, Y
             _, c, summary = sess.run([optimizador, costo, merged_summary_op],
-                            feed_dict = {x1: lote_x, y1: lote_y})
+                            feed_dict = {x: lote_x, y: lote_y})
             summary_writer.add_summary(summary, epoca * lote_total + i)
             avg_cost =+ c / lote_total
         if epoca % display_step == 0:
