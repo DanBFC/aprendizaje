@@ -44,6 +44,8 @@ capa_oculta3 = 256
 capa_oculta4 = 256
 capa_oculta5 = 256
 n_entradas = 22500
+entradasx = 150
+entradasy = 150
 clases = 2
 
 # image reader
@@ -54,9 +56,17 @@ for line in data:
     labels.append(int(line.split(' ')[1]))
 
 imagespaths = tf.constant(imagespaths)
-labels = tf.constant(labels)
-dataset = tf.data.Dataset.from_tensor_slices((imagespaths,labels))
 
+labels = tf.constant(labels)
+dataset = tf.data.Dataset.from_tensor_slices((imagespaths, labels))
+
+# Solo para ver que forma tienen, no ayudaron mucho
+print("THESE ARE TYPES")
+print(dataset.output_types)
+print("THERE ARE SHAPES")
+print(dataset.output_shapes)
+
+# Funcion para decodificar las imagenes importadas
 def _parse_function(filename, label):
     image_string = tf.read_file(filename)
     image_decoded = tf.image.decode_jpeg(image_string, channels = 3)
@@ -70,20 +80,18 @@ dataset = dataset.batch(lote)
 iterator = dataset.make_one_shot_iterator()
 #images, labels = iterator.get_next()
 X, Y = iterator.get_next()
+#tf.reshape(X, [150, 150])
 
-# Obtenemos el dataset
+# Vieja forma de obtener el cjto de datos
 #X, Y = images_to_tensor(path, mode, lote)
 #test_image, test_label = image_tensor_test(pathtest, mode)
 
-
-# input para los grafos
-# x = tf.placeholder(tf.float32, shape = (1, 150, 150, 3))
-# y = tf.placeholder(tf.float32, shape = (1, 150, 150, 3))
-x = tf.placeholder("float", [n_entradas, None], name = 'entradas')
-y = tf.placeholder("float", [clases, None], name = 'Clases')
+x = tf.placeholder("float", [None, None, None, 3], name = 'entradas')
+y = tf.placeholder("float", [None, None, None, 3], name = 'Clases')
 
 def multilayer_perceptron(x, peso, sesgo):
-    capa_1 = tf.add(tf.matmul(x, pesos['h1']), sesgo['b1'])
+    x1 = tf.reshape(x, [22500, 256])
+    capa_1 = tf.add(tf.matmul(x1, pesos['h1']), sesgo['b1'])
     capa_1 = tf.nn.relu(capa_1)
 
     capa_2 = tf.add(tf.matmul(capa_1, pesos['h2']), sesgo['b2'])
@@ -118,7 +126,6 @@ sesgo = {
     'out': tf.Variable(tf.random_normal([clases]))
 }
 
-
 # Create a graph for training
 with tf.name_scope('Modelo'):
     pred = multilayer_perceptron(x, pesos, sesgo)
@@ -149,37 +156,38 @@ merged_summary_op = tf.summary.merge_all()
 # Saver object
 saver = tf.train.Saver()
 
-#x1 = tf.placeholder("float", [n_entradas, None], name = 'batch_3')
-#y1 = tf.placeholder("float", [clases, None], name = 'Clases')
-
 # Start training
 with tf.Session() as sess:
     # Run the initializer
-    sess.run(init)
+    #sess.run(init)
     #sess.run([images, labels])
 
     print("Starting session")
+    sess.run(init)
 
+    for n in range(epocas):
+        images, label = X, Y
+        sess.run(train_op, feed_dict={x: images, y:label})
     # Start the data queue
-    tf.train.start_queue_runners()
+    #tf.train.start_queue_runners()
 
     # Training cycle
-    for epoca in range(epocas):
-        avg_cost = 0
-        lote_total = int(num_examples / lote)
-
-        for i in range(lote_total):
-            #lote_x, lote_y = X, Y
-            _, c, summary = sess.run([optimizador, costo, merged_summary_op])
-            summary_writer.add_summary(summary, epoca * lote_total + i)
-            avg_cost =+ c / lote_total
-        if epoca % display_step == 0:
-            print("Iteracion: {0: 04d} costo = {1:.9f}".format(epoca + 1, avg_cost))
-    print("Optimization Finished!")
-
-    # Calcular
-    print("Running a test")
-    print("Presicion: {0: 2f}".format(accuracy.eval({x: test_image, y: test_label})))
+    # for epoca in range(epocas):
+    #     avg_cost = 0
+    #     lote_total = int(num_examples / lote)
+    #
+    #     for i in range(lote_total):
+    #         #lote_x, lote_y = X, Y
+    #         _, c, summary = sess.run([optimizador, costo, merged_summary_op])
+    #         summary_writer.add_summary(summary, epoca * lote_total + i)
+    #         avg_cost =+ c / lote_total
+    #     if epoca % display_step == 0:
+    #         print("Iteracion: {0: 04d} costo = {1:.9f}".format(epoca + 1, avg_cost))
+    # print("Optimization Finished!")
+    #
+    # # Calcular
+    # print("Running a test")
+    # print("Presicion: {0: 2f}".format(accuracy.eval({x: test_image, y: test_label})))
 
     # Save your model
     #saved_path = saver.save(sess, saver_path)
