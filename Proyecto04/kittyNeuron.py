@@ -56,15 +56,14 @@ for line in data:
     labels.append(int(line.split(' ')[1]))
 
 imagespaths = tf.constant(imagespaths)
-
 labels = tf.constant(labels)
 dataset = tf.data.Dataset.from_tensor_slices((imagespaths, labels))
 
 # Solo para ver que forma tienen, no ayudaron mucho
-print("THESE ARE TYPES")
-print(dataset.output_types)
-print("THERE ARE SHAPES")
-print(dataset.output_shapes)
+#p rint("THESE ARE TYPES")
+#print(dataset.output_types)
+#print("THERE ARE SHAPES")
+#print(dataset.output_shapes)
 
 # Funcion para decodificar las imagenes importadas
 def _parse_function(filename, label):
@@ -75,56 +74,69 @@ def _parse_function(filename, label):
 
 dataset = dataset.map(_parse_function)
 dataset = dataset.batch(lote)
-
 # Create the iterator
 iterator = dataset.make_one_shot_iterator()
-#images, labels = iterator.get_next()
 X, Y = iterator.get_next()
-#tf.reshape(X, [150, 150])
 
-# Vieja forma de obtener el cjto de datos
-#X, Y = images_to_tensor(path, mode, lote)
-#test_image, test_label = image_tensor_test(pathtest, mode)
+# Looking at shapes
+print("before")
+print(tf.shape(X))
+X = tf.reshape(X, [(150, 150), 256])
+print("after")
+print(tf.shape(Y))
 
-x = tf.placeholder("float", [None, None, None, 3], name = 'entradas')
-y = tf.placeholder("float", [None, None, None, 3], name = 'Clases')
+
+x = tf.placeholder("float", [lote, n_entradas])
+y = tf.placeholder("float", [lote, clases])
+
+print("placeholder")
+print(tf.shape(x))
 
 def multilayer_perceptron(x, peso, sesgo):
-    x1 = tf.reshape(x, [22500, 256])
-    capa_1 = tf.add(tf.matmul(x1, pesos['h1']), sesgo['b1'])
+    #x1 = tf.reshape(x, [150*150, capa_oculta1])
+    capa_1 = tf.add(tf.matmul(x, pesos['h1']), sesgo['b1'])
     capa_1 = tf.nn.relu(capa_1)
 
-    capa_2 = tf.add(tf.matmul(capa_1, pesos['h2']), sesgo['b2'])
-    capa_2 = tf.nn.relu(capa_2)
+#    capa_2 = tf.add(tf.matmul(capa_1, pesos['h2']), sesgo['b2'])
+#    capa_2 = tf.nn.relu(capa_2)
 
-    capa_3 = tf.add(tf.matmul(capa_2, pesos['h3']), sesgo['b3'])
-    capa_3 = tf.nn.relu(capa_3)
+#    capa_3 = tf.add(tf.matmul(capa_2, pesos['h3']), sesgo['b3'])
+#    capa_3 = tf.nn.relu(capa_3)
 
-    capa_4 = tf.add(tf.matmul(capa_3, pesos['h4']), sesgo['b4'])
-    capa_4 = tf.nn.relu(capa_4)
+#    capa_4 = tf.add(tf.matmul(capa_3, pesos['h4']), sesgo['b4'])
+#    capa_4 = tf.nn.relu(capa_4)
 
-    capa_5 = tf.add(tf.matmul(capa_4, pesos['h5']), sesgo['b5'])
-    capa_5 = tf.nn.relu(capa_5)
+#    capa_5 = tf.add(tf.matmul(capa_4, pesos['h5']), sesgo['b5'])
+#    capa_5 = tf.nn.relu(capa_5)
 
-    out_layer = tf.matmul(capa_5, pesos['out']) + sesgo['out']
+    out_layer = tf.matmul(capa_1, pesos['out']) + sesgo['out']
     return out_layer
 
 pesos = {
-    'h1': tf.Variable(tf.random_normal([n_entradas, capa_oculta1])),
-    'h2': tf.Variable(tf.random_normal([capa_oculta1, capa_oculta2])),
-    'h3': tf.Variable(tf.random_normal([capa_oculta2, capa_oculta3])),
-    'h4': tf.Variable(tf.random_normal([capa_oculta3, capa_oculta4])),
-    'h5': tf.Variable(tf.random_normal([capa_oculta4, capa_oculta5])),
-    'out': tf.Variable(tf.random_normal([capa_oculta5, clases]))
+    'h1': tf.Variable(tf.random_normal([50, n_entradas])),
+    'out': tf.Variable(tf.random_normal([50, n_entradas]))
 }
+
 sesgo = {
-    'b1': tf.Variable(tf.random_normal([capa_oculta1])),
-    'b2': tf.Variable(tf.random_normal([capa_oculta2])),
-    'b3': tf.Variable(tf.random_normal([capa_oculta3])),
-    'b4': tf.Variable(tf.random_normal([capa_oculta4])),
-    'b5': tf.Variable(tf.random_normal([capa_oculta5])),
-    'out': tf.Variable(tf.random_normal([clases]))
+    'b1': tf.Variable(tf.random_normal([64])),
+    'out': tf.Variable(tf.random_normal([64]))
 }
+#pesos = {
+#    'h1': tf.Variable(tf.random_normal([n_entradas, capa_oculta1])),
+#    'h2': tf.Variable(tf.random_normal([capa_oculta1, capa_oculta2])),
+#    'h3': tf.Variable(tf.random_normal([capa_oculta2, capa_oculta3])),
+#    'h4': tf.Variable(tf.random_normal([capa_oculta3, capa_oculta4])),
+#    'h5': tf.Variable(tf.random_normal([capa_oculta4, capa_oculta5])),
+#    'out': tf.Variable(tf.random_normal([capa_oculta5, clases]))
+#}
+#sesgo = {
+#    'b1': tf.Variable(tf.random_normal([capa_oculta1])),
+#    'b2': tf.Variable(tf.random_normal([capa_oculta2])),
+#    'b3': tf.Variable(tf.random_normal([capa_oculta3])),
+#    'b4': tf.Variable(tf.random_normal([capa_oculta4])),
+#    'b5': tf.Variable(tf.random_normal([capa_oculta5])),
+#    'out': tf.Variable(tf.random_normal([clases]))
+#}
 
 # Create a graph for training
 with tf.name_scope('Modelo'):
