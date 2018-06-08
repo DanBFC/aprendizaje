@@ -1,0 +1,6 @@
+curl -LO https://github.com/tensorflow/tensorflow/raw/master/tensorflow/examples/label_image/label_image.py
+python3 label_image.py \
+--graph=/tmp/output_graph.pb --labels=/tmp/output_labels.txt \
+--input_layer=Placeholder \
+--output_layer=final_result \
+--image=home/tredok/Documents/aprendizaje/Proyecto04/Images/Test/Curie/Curie0.jpg 
