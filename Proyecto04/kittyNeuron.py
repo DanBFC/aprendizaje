@@ -70,6 +70,9 @@ def _parse_function(filename, label):
     image_string = tf.read_file(filename)
     image_decoded = tf.image.decode_jpeg(image_string, channels = 3)
     image = tf.cast(image_decoded, tf.float32)
+    print("crap")
+    print(tf.shape(image))
+    print(image)
     return image, label
 
 dataset = dataset.map(_parse_function)
@@ -81,7 +84,7 @@ X, Y = iterator.get_next()
 # Looking at shapes
 print("before")
 print(tf.shape(X))
-X = tf.reshape(X, [(150, 150), 256])
+X = tf.reshape(X, [1, 2])
 print("after")
 print(tf.shape(Y))
 
@@ -179,6 +182,8 @@ with tf.Session() as sess:
 
     for n in range(epocas):
         images, label = X, Y
+        print("INSIDE SESSION")
+        print(tf.shape(images))
         sess.run(train_op, feed_dict={x: images, y:label})
     # Start the data queue
     #tf.train.start_queue_runners()
@@ -201,6 +206,6 @@ with tf.Session() as sess:
     # print("Running a test")
     # print("Presicion: {0: 2f}".format(accuracy.eval({x: test_image, y: test_label})))
 
-    # Save your model
+    # Save your model-LO
     #saved_path = saver.save(sess, saver_path)
     #print("kitty model saved at: %s" % saved_path)
